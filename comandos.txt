@@ -1,0 +1,5 @@
+#Cria o projeto
+npx create-react-app
+
+#Executa o Projeto
+npm start
