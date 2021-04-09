@@ -7,75 +7,64 @@ class App extends Component {
 
   state = {
     posts: [],
-    contador: 0,
   }
-  TimeOut = null
 
   // Antes do render
   componentDidMount() {
-    this.handlepopular()
-    this.handleTimeout()
+    this.loadPost()
+  }
+
+  loadPost = async () => {
+    //Forma simples de fazer
+    // fetch("https://jsonplaceholder.typicode.com/posts")
+    // .then(response => response.json())
+    // .then(posts => this.setState({ posts }))
+
+    //forma avansada.
+    let postsRespose = fetch("https://jsonplaceholder.typicode.com/posts")
+    let photosRespose = fetch("https://jsonplaceholder.typicode.com/photos")
+
+    let [posts, photos] = await Promise.all([postsRespose, photosRespose,])
+    
+    let postsJson = await posts.json()
+    let photosJson = await photos.json()
+
+    let postsAndPhotos = postsJson.map((post, index) =>{
+      return {...post, cover: photosJson[index].url }
+    })
+
+    this.setState({ posts: postsAndPhotos })
   }
 
   //Apos render
   componentDidUpdate() {
-    this.handleTimeout()
+
   }
 
-  componentWillUnmount(){
-    clearTimeout(this.TimeOut)
-  }
+  componentWillUnmount() {
 
-  // metodos criados por min arrow funciones sem this
-  handlepopular = () => {
-    setTimeout(() => {
-      this.setState(
-        {
-          posts: [
-            {
-              id: 1,
-              title: 'Hello',
-              body: 'Testo Aqui'
-            },
-            {
-              id: 2,
-              title: 'Hello',
-              body: 'Testo Aqui'
-            }, {
-              id: 3,
-              title: 'Hello',
-              body: 'Testo Aqui'
-            }
-          ]
-        }
-      )
-    }, 1000)
-  }
-
-  handleTimeout = () => {
-    let { contador } = this.state
-    this.limparTimeOut = setTimeout(() => {
-      this.setState({ contador: contador + 1 })
-    },5000)
-    
   }
 
   render() {
 
-    let { posts, contador } = this.state;
+    let { posts } = this.state;
 
     return (
-      <div className="App">
-        <p>Contador: {contador}</p>
-        {posts.map(
-          post => (
-            <div key={post.id}>
-              <h1>{post.title}</h1>
-              <p>{post.body}</p>
-            </div>
-          )
-        )}
-      </div>
+      <section className="container">
+        <div className="posts">
+          {posts.map(
+            post => (
+              <div className="post">
+                <img src={post.cover} alt={post.title}></img>
+                <div key={post.id} className="post-content">
+                  <h1>{post.title}</h1>
+                  <p>{post.body}</p>
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      </section>
     )
   }
 }

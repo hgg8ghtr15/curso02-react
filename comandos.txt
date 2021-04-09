@@ -3,3 +3,6 @@ npx create-react-app
 
 #Executa o Projeto
 npm start
+
+Aula 16 - ciclo de vida dos componentes
+https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
